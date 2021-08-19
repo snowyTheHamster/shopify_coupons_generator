@@ -22,7 +22,7 @@ def get_random_string(length, repeat_no):
         letters = 'ABDEFGHJMNPQRTVYZ2345678' # choose characters here
         new_code = ''.join(random.choice(letters) for i in range(length))
 
-        if new_code not in(existing_coupons):
+        if new_code not in(existing_coupons) and new_code not in (new_coupons):
             new_coupons.append(new_code)
             i += 1
         else:
