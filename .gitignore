@@ -1,0 +1,7 @@
+.venv/
+.vscode/
+*.csv
+*.xlsx
+__pycache__/
+dist/
+build/
