@@ -2,6 +2,8 @@
 .vscode/
 *.csv
 *.xlsx
+*.txt
+*.spec
 __pycache__/
 dist/
 build/

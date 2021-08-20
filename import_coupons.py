@@ -6,61 +6,50 @@ import traceback
 import csv
 from getpass import getpass
 
-
-# get user inputs
-your_site = input("enter your shopify url.(eg: mysite.myshopify.com): ")
-user1 = input(f"Enter your shopify username for {your_site}: ")
-user1pass = getpass('Password:')
-
-# pyautogui select and delete element
-def pag_delete_element():
-    sleep(0.5)
-    pag.hotkey('ctrl', 'a')
-    sleep(0.5)
-    pag.hotkey('delete')
-    sleep(0.5)
-
-# webdriver
-options = webdriver.ChromeOptions()
-options.add_experimental_option("excludeSwitches", ["enable-logging"])
-# options.add_argument('--ignore-certificate-errors')
-# options.add_argument('--incognito')
-# options.add_argument('--headless')
-driver = webdriver.Chrome(executable_path='C:\\webdrivers\\chromedriver.exe', options=options) # win10
-driver.set_window_position(420, 0)
-driver.set_window_size(1120, 1000)
-
-url_login = f'https://{your_site}/admin/discounts'
-print(f'attempt access to: {url_login}')
-
-
-# start here
-driver.get(url_login)
-
-# login page
-login_user = driver.find_element_by_id('account_email')
-login_pass = driver.find_element_by_id('account_password')
-
-
-login_user.send_keys(user1)
-sleep(3)
-driver.find_element_by_css_selector('.ui-button.ui-button--primary.ui-button--size-large.captcha__submit').click()
-sleep(3)
-driver.find_element_by_css_selector('.ui-password__input.next-input.next-input--invisible.js-password-input.transferable-input').click()
-driver.find_element_by_css_selector('.ui-password__input.next-input.next-input--invisible.js-password-input.transferable-input').send_keys(user1pass)
-sleep(3)
-driver.find_element_by_css_selector('.ui-button.ui-button--primary.ui-button--size-large.captcha__submit').click()
-sleep(10)
-
-
 # start loop here
-def import_coupons(percentage, minimum, datestart, timestart, dateend, timeend):
+def import_coupons(percentage, minimum, datestart, timestart, dateend, timeend, coupon_csv, site_url, username, password):
+
+    # pyautogui select and delete element
+    def pag_delete_element():
+        sleep(0.5)
+        pag.hotkey('ctrl', 'a')
+        sleep(0.5)
+        pag.hotkey('delete')
+        sleep(0.5)
+
+    # webdriver
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    # options.add_argument('--ignore-certificate-errors')
+    # options.add_argument('--incognito')
+    # options.add_argument('--headless')
+    driver = webdriver.Chrome(executable_path='C:\\webdrivers\\chromedriver.exe', options=options) # win10
+    driver.set_window_position(420, 0)
+    driver.set_window_size(1120, 1000)
+
+    url_login = f'https://{site_url}/admin/discounts'
+    print(f'attempt access to: {url_login}')
+
+
+    # start here
+    driver.get(url_login)
+
+    driver.find_element_by_id('account_email').send_keys(username)
+    sleep(3)
+    driver.find_element_by_css_selector('.ui-button.ui-button--primary.ui-button--size-large.captcha__submit').click()
+    sleep(3)
+    driver.find_element_by_css_selector('.ui-password__input.next-input.next-input--invisible.js-password-input.transferable-input').click()
+    driver.find_element_by_css_selector('.ui-password__input.next-input.next-input--invisible.js-password-input.transferable-input').send_keys(password)
+    sleep(3)
+    driver.find_element_by_css_selector('.ui-button.ui-button--primary.ui-button--size-large.captcha__submit').click()
+    sleep(10)
 
     # coupon codes to import
-    with open('new_codes.csv', mode='r') as csv_file:
+    with open(coupon_csv, mode='r') as csv_file:
         coupons = csv.reader(csv_file)
 
-        for coupon in coupons:
+        for index, coupon in enumerate(coupons, 1):
+            print(f'importing coupon no.{index}, code:{coupon}')
             driver.find_element_by_css_selector('.Polaris-Button_r99lw.Polaris-Button--primary_7k9zs').click() # click Create discount btn
             sleep(2)
 
@@ -130,12 +119,10 @@ def import_coupons(percentage, minimum, datestart, timestart, dateend, timeend):
             for btn in btns:
                 btn.click()
             sleep(7)
+            print(f'done no.{index}')
 
             # click back to discounts main page
-            driver.get('https://mizuno-hk.myshopify.com/admin/discounts/')
+            driver.get(f'https://{site_url}/admin/discounts/')
             sleep(7)
 
-
-#import_coupons(percentage, minimum, datestart, timestart, dateend, timeend)
-import_coupons(15, 500, '2021-09-01', '12:00am', '2022-09-30', '11:59pm')
-    
+    print('finished importing coupons, you may now close the program')
