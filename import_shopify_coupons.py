@@ -31,7 +31,7 @@ driver.set_window_position(420, 0)
 driver.set_window_size(1120, 1000)
 
 url_login = f'https://{your_site}/admin/discounts'
-print('attemp access to: {url_login}')
+print(f'attempt access to: {url_login}')
 
 
 # start here
